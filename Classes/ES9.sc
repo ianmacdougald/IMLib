@@ -1,3 +1,8 @@
+/* If you find that control voltages are not working correctly, make sure that the ES9 is not filtering out DC offsets.
+You can do this using its config tool:
+https://www.expert-sleepers.co.uk/webapps/es9_config_tool_1.1.html
+*/
+
 ES9 {
 	classvar scale = 10.0, div = 5.0;
 	classvar <offsets, <server;
