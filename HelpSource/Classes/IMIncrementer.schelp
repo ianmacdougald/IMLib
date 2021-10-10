@@ -1,0 +1,74 @@
+TITLE:: IMIncrementer
+summary::Generator of incrementally unique filenames
+categories::Libraries>IMLib
+keyword:: imlib, utilities, im, incrementer
+
+DESCRIPTION::
+IMIncrementer creates incrementally unique filenames stored in a specified folder.
+
+CLASSMETHODS::
+method::new
+argument::fileName
+The filename that this class should increment
+argument::folder
+The folder where the class will look for increments of the file template
+
+INSTANCEMETHODS::
+method::increment
+Increments the filename and returns it.
+
+method::decrement
+Decrements the filename and returns it.
+
+method::reset
+Resets the increment value, forcing the object to check the folder changes.
+
+method::fileName
+Gets and sets the template from which filenames are incremented.
+
+method::folder
+Gets and sets the folder where the instance looks for created filenames to increment.
+
+method::extension
+Gets and sets the incremented path's extension.
+
+
+private::fullPath
+EXAMPLES::
+code::
+//Create a new instance of IMIncrementer
+f = IMIncrementer("some-file.wav", "~/Desktop".standardizePath);
+
+//Inspect the first increment.
+f.increment.postln;
+
+//The instance continue to increment while the current file does not exist.
+f.increment.postln;
+
+(
+//But if we make the file...
+s.waitForBoot({
+	fork{
+		var synth;
+		s.record(f.increment);
+		s.sync;
+		synth = {SinOsc.ar(440)}
+		.play.onFree({s.stopRecording});
+		0.1.wait;
+		synth.free;
+	};
+});
+)
+
+//...then the object creates a new increment.
+f.increment.postln;
+
+(
+//If a file is added with a number at the end of it, incrementing starts from there.
+f = IMIncrementer.new(
+	"some-other-file-1.wav",
+	"~/Desktop".standardizePath
+);
+f.increment.postln;
+)
+::
