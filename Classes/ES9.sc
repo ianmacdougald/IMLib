@@ -1,6 +1,16 @@
 ES9 {
 	classvar scale = 10.0, div = 5.0;
-	classvar <offsets;
+	classvar <offsets, <server;
+
+	*server_{ | newServer(Server.default) |
+		if (newServer.isKindOf(Server)) {
+			server = newServer;
+		} /* else */ {
+			"Cannot assign object not of type Server.".warn;
+			nil;
+		}
+	}
+
 
 	*initOffsets {
 		offsets = Array.newClear(16);
@@ -9,24 +19,35 @@ ES9 {
 
 	*findOffset { | bus |
 		var address, oscFunc;
-		address = ("/es9_Offset_"++UniqueID.next).asSymbol;
-		oscFunc = oscFunc = OSCFunc.new({ | msg |
-			offsets[bus] = msg[3];
-			oscFunc.free;
-		}, address);
-		//synth
-		play {
-			var impulse = Impulse.kr(0);
-			var sig = SoundIn.ar(bus, scale);
-			sig = Latch.ar(sig, impulse);
-			SendReply.kr(impulse, address, sig);
-			EnvGen.kr(
-				Env([0], [0]),
-				impulse,
-				doneAction: Done.freeSelf
-			);
-			Silent.ar;
+
+		if (server.isNil) {
+			this.server = Server.default;
 		};
+
+		if (server.hasBooted) {
+
+			address = ("/es9_Offset_"++UniqueID.next).asSymbol;
+			oscFunc = oscFunc = OSCFunc.new({ | msg |
+				offsets[bus] = msg[3];
+				oscFunc.free;
+			}, address);
+			//synth
+			play {
+				var impulse = Impulse.kr(0);
+				var sig = SoundIn.ar(bus, scale);
+				sig = Latch.ar(sig, impulse);
+				SendReply.kr(impulse, address, sig);
+				EnvGen.kr(
+					Env([0], [0]),
+					impulse,
+					doneAction: Done.freeSelf
+				);
+				Silent.ar;
+			};
+
+		} /*else*/ {
+			"Server % has not booted".format(server).warn;
+		}
 	}
 
 	*ar { | bus(0) |
