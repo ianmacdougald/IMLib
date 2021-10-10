@@ -1,0 +1,90 @@
+TITLE::IMStorage
+summary::Interface for persistent storage of data
+categories::Libraries>IMLib
+keyword::storage, im
+DESCRIPTION::
+
+IMStorage is used for storing data using persistent storage, meaning that they will survive across sesssions of the link::Classes/Interpreter::. Originally, I developed this class to store strings associated with folders I was often using on my machine. However, it can conceivably be used more broadly than this.
+
+CLASSMETHODS::
+
+method::at
+Gets the path stored at the key symbol.
+argument::key
+A symbol.
+
+method::add
+Sets the path stored at the key symbol.
+argument::association
+An link::Classes/Association##association::.
+
+method::removeAt
+Removes the path at the symbol key from storage.
+argument::key
+A symbol.
+
+method::keys
+Gets the sets of keys at which paths are stored.
+
+private::defaultPath
+private::checkDictionary
+private::parse
+private::pathToQuark
+private::stroagePath
+private::write
+private::storagePath
+private::getDictionary
+
+EXAMPLES::
+code::
+//Set a path using the key \test.
+IMStorage.add(\test -> "~/Documents/Example/Path".standardizePath);
+
+//Get the path from the same key.
+IMStorage.at(\test).postln;
+
+//If you want...reboot the interpreter (wiping SC's memory) and try again.
+//The path should have persisted.
+IMStorage.at(\test).postln;
+
+//Change the path and reboot again to see that configurations stick.
+IMStorage.add(\test -> "~/Whatever/Path".standardizePath);
+
+//Add a new key.
+IMStorage.add(\test2 -> "~/New/Path".standardizePath);
+
+//Get the keys associated with the paths stored.
+IMStorage.keys.postln;
+
+//Remove the test paths from storage.
+IMStorage.removeAt(\test);
+IMStorage.removeAt(\test2);
+
+//See, they're gone!
+IMStorage.keys.postln;
+
+//Test.
+IMStorage.at(\test);
+IMStorage.at(\test2);
+::
+
+IMStorage can also be made to work with strings, prepending its items to quickly return common addresses in the style of link::Classes/String#-standardizePath#:: using pseudo-method lookups similar to link::Classes/IdentityDictionary#-know#IdentityDictionary::.
+code::
+//Enable the use of IMStorage data with strings.
+//This configuration will persist across interpreter sessions.
+String.imKnow_(true);
+
+(
+//Store a path using an empty string and a unique pseudo-method name.
+if(String.imKnow){
+	"".foobar = "~/Desktop".standardizePath;
+};
+)
+
+//Use this pseudo-method to quickly prepend its path with other strings.
+"hello_world.wav".foobar.postln;
+
+//Stop this behavior by changing the flag set through the String class.
+String.imKnow_(false);
+"hello_world.wav".foobar;
+::
