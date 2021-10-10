@@ -1,6 +1,6 @@
 FieldsteelReverb{
-	//From the great Eli Fieldsteel's tutorials or lectures.
-	//From somewhere.
+	//From the great Eli Fieldsteel's tutorials or lectures or something.
+	//I copied this from YouTube.
 	*ar{ | in, ffreq(\freq.kr(1500)), decay(\decay.kr(4)) |
 		var sig = LPF.ar(in, ffreq);
 		sig = DelayN.ar(sig, 0.03, 0.03);
