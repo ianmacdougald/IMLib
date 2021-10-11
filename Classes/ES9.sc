@@ -4,8 +4,10 @@ https://www.expert-sleepers.co.uk/webapps/es9_config_tool_1.1.html
 */
 
 ES9 {
+	classvar storageKey = '__ES9Offsets__';
 	classvar scale = 10.0, div = 5.0;
 	classvar <offsets, <server;
+	classvar condition;
 
 	*server_{ | newServer(Server.default) |
 		if (newServer.isKindOf(Server)) {
@@ -16,6 +18,9 @@ ES9 {
 		}
 	}
 
+	*postOffsets {
+		format("ES9 Offsets:\n\t%", offsets).postln;
+	}
 
 	*initOffsets {
 		if (server.isNil) {
@@ -23,11 +28,28 @@ ES9 {
 		};
 
 		if (server.hasBooted) {
-			offsets = Array.newClear(16);
-			16.do { | bus | this.findOffset(bus) };
+			fork {
+				var size = 14;
+				condition = Condition.new;
+				offsets = Array.newClear(size);
+				size.do { | bus |
+					this.findOffset(bus);
+					condition.hang;
+				};
+				this.postOffsets;
+			};
 		} /* else */ {
 			"Server % has not booted".format(server).warn;
 		};
+	}
+
+	*storeOffsets {
+		IMStorage.add(storageKey -> offsets);
+	}
+
+	*retrieveOffsets {
+		offsets = IMStorage.at(storageKey).collect(_.asFloat);
+		this.postOffsets;
 	}
 
 	*findOffset { | bus |
@@ -36,6 +58,7 @@ ES9 {
 		address = ("/es9_Offset_"++UniqueID.next).asSymbol;
 		oscFunc = oscFunc = OSCFunc.new({ | msg |
 			offsets[bus] = msg[3];
+			condition.unhang;
 			oscFunc.free;
 		}, address);
 		//synth
@@ -54,10 +77,17 @@ ES9 {
 	}
 
 	*ar { | bus(0) |
-		var sig;
+		var sig, offset;
 		bus = bus.clip(0, offsets.size - 1);
+
+		if (offsets.isNil) {
+			this.retrieveOffsets;
+		};
+
+		try { offset = offsets[bus] };
+
 		sig = SoundIn.ar(bus, scale);
-		sig = sig - try { offsets[bus] }{ ES9.initOffsets; 0 };
+		sig = sig - (offset ? 0);
 		^(sig.clip(0.0, div) / div);
 	}
 }
