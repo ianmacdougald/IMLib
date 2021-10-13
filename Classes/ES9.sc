@@ -76,7 +76,7 @@ ES9 {
 		};
 	}
 
-	*ar { | bus(0) |
+	*ar { | bus(0), mul(1.0), add(0) |
 		var sig, offset;
 		bus = bus.clip(0, offsets.size - 1);
 
@@ -88,6 +88,6 @@ ES9 {
 
 		sig = SoundIn.ar(bus, scale);
 		sig = sig - (offset ? 0);
-		^(sig.clip(0.0, div) / div);
+		^(sig.clip(0.0, div) / div).madd(mul, add);
 	}
 }
