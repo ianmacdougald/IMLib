@@ -6,7 +6,7 @@ https://www.expert-sleepers.co.uk/webapps/es9_config_tool_1.1.html
 ES9 {
 	classvar storageKey = '__ES9Offsets__';
 	classvar scale = 10.0, div = 5.0;
-	classvar <offsets, <server;
+	classvar offsets, <server;
 	classvar condition;
 
 	*server_{ | newServer(Server.default) |
@@ -47,9 +47,9 @@ ES9 {
 		IMStorage.add(storageKey -> offsets);
 	}
 
-	*retrieveOffsets {
-		offsets = IMStorage.at(storageKey).collect(_.asFloat);
-		this.postOffsets;
+	*offsets { 
+	    offsets = offsets ? IMStorage.at(storageKey).collect(_.asFloat);
+	    ^offsets;
 	}
 
 	*findOffset { | bus |
