@@ -36,6 +36,7 @@ ES9 {
 					this.findOffset(bus);
 					condition.hang;
 				};
+				this.storeOffsets;
 				this.postOffsets;
 			};
 		} /* else */ {
@@ -47,16 +48,16 @@ ES9 {
 		IMStorage.add(storageKey -> offsets);
 	}
 
-	*offsets { 
-	    offsets = offsets ? IMStorage.at(storageKey).collect(_.asFloat);
-	    ^offsets;
+	*offsets {
+		offsets = offsets ? IMStorage.at(storageKey).collect(_.asFloat);
+		^offsets;
 	}
 
 	*findOffset { | bus |
 		var address, oscFunc;
 
 		address = ("/es9_Offset_"++UniqueID.next).asSymbol;
-		oscFunc = oscFunc = OSCFunc.new({ | msg |
+		oscFunc = OSCFunc.new({ | msg |
 			offsets[bus] = msg[3];
 			condition.unhang;
 			oscFunc.free;
@@ -77,17 +78,15 @@ ES9 {
 	}
 
 	*ar { | bus(0), mul(1.0), add(0) |
-		var sig, offset;
-		bus = bus.clip(0, offsets.size - 1);
+		var sig;
 
-		if (offsets.isNil) {
-			this.retrieveOffsets;
+		if (this.offsets.isNil) {
+			Error("No DC offsets stored from ES9. Try unplugging all jacks from ES9 inputs running the following: ES9.initOffsets;").throw;
 		};
 
-		try { offset = offsets[bus] };
-
+		bus = bus.clip(0, offsets.size - 1);
 		sig = SoundIn.ar(bus, scale);
-		sig = sig - (offset ? 0);
+		sig = sig - offsets[bus];
 		^(sig.clip(0.0, div) / div).madd(mul, add);
 	}
 }
