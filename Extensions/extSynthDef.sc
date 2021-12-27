@@ -1,5 +1,5 @@
-+ SynthDef{
-	*ianWrapper{ | sig(SinOsc.ar(\freq.kr(400), \phase.kr(0))), timescale(\timescale.kr(1)) |
++ SynthDef {
+	*ianWrapper { | sig(SinOsc.ar(\freq.kr(400), \phase.kr(0))), timescale(\timescale.kr(1)) |
 		^SynthDef.wrap({
 			var env = EnvGen.ar(
 				Env.perc(
@@ -19,7 +19,6 @@
 	}
 
 	*ianFilterWrapper{ | sig, freq(\freq.kr(400)), timescale(\timescale.kr(1)), filterClass(RLPF), qArg(\rq.kr(0.2)) |
-
 		if (sig.isNil) {
 			Error("Input must be a valid signal").throw;
 		};
@@ -44,17 +43,16 @@
 				qArg
 			);
 		});
-
 	}
 
-	*ianFMOperatorWrapper{| n(1), freq, timescale |
+	*ianFMOperatorWrapper { | n(1), freq, timescale |
 		if (n.isNil.not) {
 			n = n.asInteger;
 		}/*ELSE*/{
 			n = "";
 		};
 
-		^SynthDef.wrap({
+		^SynthDef.wrap ({
 			var atk = format("op%Atk", n).asSymbol.kr(0);
 			var release = format("op%Release", n).asSymbol.kr(1);
 			var curve = format("op%Curve", n).asSymbol.kr(-4);
@@ -71,7 +69,7 @@
 		});
 	}
 
-	*ianFMOpArrayWrapper{|n(1), freq, timescale|
+	*ianFMOpArrayWrapper { | n(1), freq, timescale |
 		^n.collect({|index|
 			this.ianFMOperatorWrapper(index, freq, timescale);
 		});
