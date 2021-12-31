@@ -1,11 +1,6 @@
 + ServerOptions {
-	*newIanBasic { | inputs(2), outputs(2) |
-		var options = this.new;
-		options.sampleRate = 48e3;
-		options.memSize = 2.pow(19);
-		options.numInputBusChannels = inputs;
-		options.numOutputBusChannels = outputs;
-		^options;
+	*newIanBasic { | inputs(2), outputs(2), outDevice, inDevice |
+		^this.new.toIanBasic(inputs, outputs, outDevice, inDevice);
 	}
 
 	*tascam12 {
@@ -17,13 +12,18 @@
 	}
 
 	*es9 {
-		^this.newIanBasic(16, 16);
+		^this.newIanBasic(16, 16, "ES-9");
 	}
 
-	toIanBasic { | inputs(2), outputs(2) |
-		this.sampleRate_(48e3).memSize_(2.pow(19))
-		.numInputBusChannels_(inputs)
-		.numOutputBusChannels_(outputs);
+	toIanBasic { | inputs(2), outputs(2), outDevice, inDevice |
+		inDevice = inDevice ? outDevice;
+
+		this.inDevice = inDevice;
+		this.outDevice = outDevice;
+		this.sampleRate = 48e3;
+		this.memSize = 2.pow(19);
+		this.numInputBusChannels = inputs;
+		this.numOutputBusChannels = outputs;
 	}
 
 	toTascam12 {
@@ -35,7 +35,7 @@
 	}
 
 	toES9 {
-		this.toIanBasic(16, 16);
+		this.toIanBasic(16, 16, "ES-9");
 	}
 }
 
