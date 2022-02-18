@@ -49,7 +49,7 @@ ES9 {
 	}
 
 	*offsets {
-		offsets = offsets ? IMStorage.at(storageKey).collect(_.asFloat);
+		offsets = offsets ?? { IMStorage.at(storageKey).collect(_.asFloat) };
 		^offsets;
 	}
 
