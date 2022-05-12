@@ -36,7 +36,7 @@
 			\ffRelease.kr(1),
 			1,
 			\ffCurve.kr(-4)
-		).ar(Done.freeSelf, 1, timescale);
+		).ar(Done.none, 1, timescale);
 
 		ffEnv = (lo + (ffEnv * (hi - lo))).abs;
 
@@ -63,7 +63,7 @@
 		opFreqRatio = format("op%FreqRatio", n).asSymbol.kr(1.0);
 		amp = format("op%Amp", n).asSymbol.kr(0);
 
-		env = Env.perc(atk, release, 1, curve).ar(Done.freeSelf, 1, timescale);
+		env = Env.perc(atk, release, 1, curve).ar(Done.none, 1, timescale);
 		op = SinOsc.ar(freq * opFreqRatio);
 
 		^(op * env * amp);

@@ -77,7 +77,7 @@ ES9 {
 		};
 	}
 
-	*ar { | bus(0), mul(1.0), add(0) |
+	*ar { | bus(0), scaleMin(0.0), scaleMax(1.0), mul(1.0), add(0) |
 		var sig;
 
 		if (this.offsets.isNil) {
@@ -87,6 +87,9 @@ ES9 {
 		bus = bus.clip(0, offsets.size - 1);
 		sig = SoundIn.ar(bus, scale);
 		sig = sig - offsets[bus];
-		^(sig.clip(0.0, div) / div).madd(mul, add);
+		sig = (sig.clip(0.0, div) / div);
+		sig = sig.clip(scaleMin, scaleMax);
+		sig = sig.linlin(scaleMin, scaleMax, 0.0, 1.0);
+		^sig.madd(mul, add);
 	}
 }
