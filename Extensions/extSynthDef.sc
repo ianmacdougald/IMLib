@@ -14,7 +14,7 @@
 			\curve.kr(-4)
 		).ar(Done.freeSelf, 1, timescale);
 
-		sig = sig * env * \ampDb.kr(-6).dbamp;
+		sig = sig * env * \amp.kr(-3.dbamp);
 
 		^Pan2.ar(sig, \pan.kr(0));
 	}
