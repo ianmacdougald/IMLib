@@ -56,7 +56,7 @@
 	}
 
 	toTascam12 {
-		this.toIanBasic(12, 10, "Tascam12");
+		this.toIanBasic(12, 10, "Model 12");
 	}
 
 	toKomplete6 {
