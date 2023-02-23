@@ -68,11 +68,7 @@ ES9 {
 			var sig = SoundIn.ar(bus, scale);
 			sig = Latch.ar(sig, impulse);
 			SendReply.kr(impulse, address, sig);
-			EnvGen.kr(
-				Env([0], [0]),
-				impulse,
-				doneAction: Done.freeSelf
-			);
+			FreeSelf.kr(impulse);
 			Silent.ar;
 		};
 	}
