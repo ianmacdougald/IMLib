@@ -88,4 +88,8 @@ ES9 {
 		sig = sig.linlin(scaleMin, scaleMax, 0.0, 1.0);
 		^sig.madd(mul, add);
 	}
+
+	*kr { | bus(0), scaleMin(0.0), scaleMax(1.0), mul(1.0), add(0) |
+		^A2K.kr(this.ar(bus, scaleMin, scaleMax, mul, add));
+	}
 }
