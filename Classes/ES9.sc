@@ -93,3 +93,25 @@ ES9 {
 		^A2K.kr(this.ar(bus, scaleMin, scaleMax, mul, add));
 	}
 }
+
+ES9Bi : ES9 {
+	*ar { | bus(0), scaleMin(-1.0), scaleMax(1.0), mul(1.0), add(0) |
+		var sig;
+
+		if (this.offsets.isNil) {
+			Error("No DC offsets stored from ES9. Try unplugging all jacks from ES9 inputs running the following: ES9.initOffsets;").throw;
+		};
+
+		bus = bus.clip(0, offsets.size - 1);
+		sig = SoundIn.ar(bus);
+		sig = (sig - (offsets[bus] / 2)) * scale;
+		sig = (sig.clip(div.neg, div) / div);
+		sig = sig.clip(scaleMin, scaleMax);
+		sig = sig.linlin(scaleMin, scaleMax, -1.0, 1.0);
+		^sig.madd(mul, add);
+	}
+
+	*kr { | bus(0), scaleMin(-1.0), scaleMax(1.0), mul(1.0), add(0) |
+		^A2K.kr(this.ar(bus, scaleMin, scaleMax, mul, add));
+	}
+}
