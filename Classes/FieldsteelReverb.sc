@@ -1,8 +1,8 @@
 FieldsteelReverb {
-	classvar <>predelay = 0.03;
+	// classvar <>predelay = 0.03;
 	//From the great Eli Fieldsteel's tutorials or lectures or something.
 	//I copied this from YouTube.
-	*ar { | in, ffreq(\freq.kr(1500)), decay(\decay.kr(4)) |
+	*ar { | in, ffreq(\freq.kr(1500)), decay(\decay.kr(4)), predelay = 0.03 |
 		var sig = LPF.ar(in, ffreq);
 		sig = DelayN.ar(sig, predelay, predelay);
 		sig = CombN.ar(sig, 0.1, ({ Rand(0.01, 0.099) }!32), decay);
