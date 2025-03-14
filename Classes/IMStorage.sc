@@ -1,5 +1,5 @@
 IMStorage {
-	classvar dictionary, path;
+	classvar <dictionary, path;
 
 	*write { | item |
 		var fd = File.open(path, "w+");
@@ -19,7 +19,15 @@ IMStorage {
 
 	*getDictionary {
 		dictionary = path.parseYAMLFile ?? { Dictionary.new };
-		dictionary = dictionary.withSymbolKeys;
+
+		// Convert all string keys to symbol keys
+		dictionary.keys.do { | key |
+			if (key.isKindOf(String)) {
+				var previous = dictionary[key];
+				dictionary.removeAt(key);
+				dictionary.add(key.asSymbol -> previous);
+			}
+		}
 	}
 
 	*add { | association |
